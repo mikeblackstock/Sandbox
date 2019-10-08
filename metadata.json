@@ -1,0 +1,21 @@
+{
+  "type": "application",
+  "name": "Sandbox",
+  "category": "projects",
+  "server": "server.js",
+  "icon": "icon.png",
+  "singleton": true,
+  "title": {
+    "en_EN": "Sandbox"
+  },
+  "description": {
+    "en_EN": "Sandbox"
+  },
+  "files": [
+    "main.js",
+    "main.css"
+  ],
+  "mimes": [
+    "text\/x-lilypond"
+  ]
+}
