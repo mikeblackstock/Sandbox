@@ -16,7 +16,7 @@ import {
 import * as ace from 'brace';
 
 
-import 'brace/mode/lilypond';
+import './lilypond';
 import 'brace/mode/html';
 import 'brace/mode/json';
 

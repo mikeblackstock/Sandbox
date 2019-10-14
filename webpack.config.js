@@ -17,7 +17,10 @@ module.exports = {
   },
   plugins: [
     new CopyWebpackPlugin([
-      'icon.png'
+    {from:'icon.png',to:'icon.png'},
+    {from:'src/main.css',to:'main.css'},
+    {from:'src/main.css.map',to:'main.css.map'},
+    {from:'src/lilypond.js',to:'lilypond.js'}
     ])
   ],
   module: {
