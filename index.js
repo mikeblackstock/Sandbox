@@ -91,7 +91,9 @@ let userID= "demo";
 	proc.on('zoom', file => {
 
 		zoomString= file;
-
+        let tmpPath= pdfFileObj.file.path.split("?");
+        pdfFileObj.file.path=  tmpPath[0] + "?" + Date.now() + zoomString;
+        osjs.run('PDFViewer', pdfFileObj);
 	});
  
  
