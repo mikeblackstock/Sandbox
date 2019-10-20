@@ -68,8 +68,8 @@ const createEditMenu = (state, actions, _) => ([{
 	},
 
     {
-	label: 'Highlight',
-		onclick: () => actions.highlightSelection()
+	label: 'Show',
+		onclick: () => actions.showSelection()
 	},
     {
 	label: 'Clear',
@@ -478,7 +478,7 @@ h(Toolbar, {
 		lines: 0,
 		buttons:'',
 		showTools: true,
-        selectionRnge: {},
+        selectionRange: "",
         beginSelect: {},
         endSelect: {},
 		log: '',
@@ -543,18 +543,20 @@ h(Toolbar, {
         clearSelection: () => (state, actions) => {
 //            console.log(editor.getSelectedText());
             editor.selection.clearSelection();
+            state.selectionRange= '';
 		},
        pasteSelection: () => (state, actions) => {
-editor.insert(editor.getSession().doc.getTextRange(state.selectionRange));
-console.log(editor.getSession().doc.getTextRange(state.selectionRange));
-//editor.insert(editor.getCursorPosition(), editor.getSelectedText());
- //           editor.selection.clearSelection();
+            if (state.selectionRange !== "") {
+            editor.insert(editor.getSession().doc.getTextRange(state.selectionRange));
+            console.log(editor.getSession().doc.getTextRange(state.selectionRange));
+  
+            }
 		},
 
-        highlightSelection: () => (state, actions) => {
+        showSelection: () => (state, actions) => {
 
-
-            editor.selection.setRange(state.selectionRange);
+            if (state.selectionRange !== "")
+                editor.selection.setRange(state.selectionRange);
         },       
         pasteClipboard: () => (state, actions) => {
          //   console.log(window.clipboardData.getData('Text'));
