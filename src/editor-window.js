@@ -21,7 +21,7 @@ import 'brace/mode/html';
 import 'brace/mode/json';
 
 import 'brace/theme/chrome';
-
+import * as clipboard from 'clipboard-polyfill';
 let snippet = {};
 let tmpID = '';
 let zoomString = '#zoom=100';
@@ -50,6 +50,35 @@ const createMainMenu = (current, actions, _) => ([
 		label: _('LBL_QUIT'),
 		onclick: () => actions.menuQuit()
 	}]);
+
+const createEditMenu = (state, actions, _) => ([{
+	label: _('Begin selection'),
+//		checked: state.showLog,
+		onclick: () => actions.beginSelection()
+	},
+	{
+	label: _('End selection'),
+//		checked: state.showTools,
+		onclick: () => actions.endSelection()
+	},	
+
+	{
+	label: 'Paste selection',
+		onclick: () => actions.pasteSelection()
+	},
+
+    {
+	label: 'Highlight',
+		onclick: () => actions.highlightSelection()
+	},
+    {
+	label: 'Clear',
+		onclick: () => actions.clearSelection()
+	}
+]);
+
+
+
 
 const createViewMenu = (state, actions, _) => ([{
 	label: _('Log'),
@@ -91,7 +120,7 @@ const createViewMenu = (state, actions, _) => ([{
 
 const createEditorInterface = (core, proc, win, $content) => {
 	let editor;
-
+ 
 	const _ = core.make('osjs/locale').translate;
 	const vfs = core.make('osjs/vfs');
 	const contextmenu = core.make('osjs/contextmenu').show;
@@ -124,6 +153,10 @@ const createEditorInterface = (core, proc, win, $content) => {
 			h(MenubarItem, {
 				onclick: ev => actions.openMainMenu(ev)
 			}, _('LBL_FILE')),
+
+			h(MenubarItem, {
+				onclick: ev => actions.openEditMenu(ev)
+			}, _('Edit')),
 			h(MenubarItem, {
 				onclick: ev => actions.openViewMenu(ev)
 			}, _('LBL_VIEW')),
@@ -157,6 +190,7 @@ const createEditorInterface = (core, proc, win, $content) => {
 			shrink: 1,
 			oncreate: el => {
 				editor = ace.edit(el);
+       
 				//        editor.setTheme('ace/theme/chrome');
 				editor.setTheme('ace/theme/chrome');
 				editor.getSession().setMode('ace/mode/lilypond');
@@ -444,6 +478,9 @@ h(Toolbar, {
 		lines: 0,
 		buttons:'',
 		showTools: true,
+        selectionRnge: {},
+        beginSelect: {},
+        endSelect: {},
 		log: '',
 		showLog: false
 	}, {
@@ -454,6 +491,16 @@ h(Toolbar, {
 				menu: createMainMenu(proc.args.file, actions, _)
 			});
 		},
+
+		openEditMenu: ev => (state, actions) => {
+
+			contextmenu({
+				position: ev.target,
+				menu: createEditMenu(state, actions, _)
+			});
+		},
+
+
 
 		openViewMenu: ev => (state, actions) => {
 			contextmenu({
@@ -479,6 +526,41 @@ h(Toolbar, {
 //			zoomString= zoom;
 			proc.emit('showZoom');
 		},
+
+        beginSelection: () => (state, actions) => {
+            state.selectionRange= editor.selection.getRange();
+  //          state.beginSelect= editor.getCursorPosition();
+            console.log(state.selectionRange.start);
+		},
+        endSelection: () => (state, actions) => {
+
+            console.log(editor.getCursorPosition());
+ //           editor.selection.setRange(0, 0, 10, 0);
+            state.selectionRange.end= editor.getCursorPosition();
+            editor.selection.setRange(state.selectionRange);
+ 
+		},
+        clearSelection: () => (state, actions) => {
+//            console.log(editor.getSelectedText());
+            editor.selection.clearSelection();
+		},
+       pasteSelection: () => (state, actions) => {
+editor.insert(editor.getSession().doc.getTextRange(state.selectionRange));
+console.log(editor.getSession().doc.getTextRange(state.selectionRange));
+//editor.insert(editor.getCursorPosition(), editor.getSelectedText());
+ //           editor.selection.clearSelection();
+		},
+
+        highlightSelection: () => (state, actions) => {
+
+
+            editor.selection.setRange(state.selectionRange);
+        },       
+        pasteClipboard: () => (state, actions) => {
+         //   console.log(window.clipboardData.getData('Text'));
+         //   document.execCommand("paste");
+clipboard.readText().then(console.log, console.error);
+        },
 		test: () => {
 			proc.emit("sandbox:test");
 		}, 
