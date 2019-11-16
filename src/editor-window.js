@@ -37,8 +37,8 @@ const createMainMenu = (current, actions, _) => ([
 	},
 	
 		{
-		label: _('Rhythms.ly'),
-		onclick: () => actions.loadSnippet('Rhythms.ly')
+		label: _('Rhythm.ly'),
+		onclick: () => actions.loadSnippet('Rhythm.ly')
 	},
 		
 	{
@@ -66,7 +66,10 @@ const createEditMenu = (state, actions, _) => ([{
 	label: 'Paste selection',
 		onclick: () => actions.pasteSelection()
 	},
-
+    {
+	label: 'Paste clipboard',
+		onclick: () => actions.pasteClipboard()
+	},
     {
 	label: 'Show',
 		onclick: () => actions.showSelection()
@@ -133,8 +136,10 @@ const createEditorInterface = (core, proc, win, $content) => {
 	const setText = function(contents, path) {
 		editor.setValue(contents);
 		editor.navigateFileStart();
-
-		win.setTitle(path);
+        if (window.mobile)
+            win.setTitle(" ");
+        else
+		    win.setTitle(path);
 	};
 
 	const setSavedTitle = function(path) {
@@ -552,17 +557,19 @@ h(Toolbar, {
   
             }
 		},
+       pasteClipboard: () => (state, actions) => {
 
+document.execCommand('paste');
+
+
+ 
+		},
         showSelection: () => (state, actions) => {
 
             if (state.selectionRange !== "")
                 editor.selection.setRange(state.selectionRange);
         },       
-        pasteClipboard: () => (state, actions) => {
-         //   console.log(window.clipboardData.getData('Text'));
-         //   document.execCommand("paste");
-clipboard.readText().then(console.log, console.error);
-        },
+
 		test: () => {
 			proc.emit("sandbox:test");
 		}, 
@@ -626,6 +633,9 @@ clipboard.readText().then(console.log, console.error);
 				filename: filename,
 				path: 'home:/' + tmpID + '/' + filename
 			};
+
+
+
 			//		OSjs.run('Sandbox', {file: {filename: 'Scale.ly', path:'home:/Scale.ly'}});
 			vfs.readfile(snippet)
 				.then(contents => setText(contents, snippet.path))
@@ -646,6 +656,7 @@ clipboard.readText().then(console.log, console.error);
 
 	});
 	proc.on('loadDefault', () => {
+alert("Sandbox:editor-window:656 " + snippet);
 		vfs.readfile(snippet)
 				.then(contents => setText(contents, snippet.path))
 				.catch(error => console.error(error)); // FIXME: Dialog
@@ -668,10 +679,11 @@ clipboard.readText().then(console.log, console.error);
 		hyperapp.appendLog(error);
 	});
 
-	proc.on('attention', (args) => {
-		snippet = args.file;
-		vfs.readfile(snippet)
-			.then(contents => setText(contents, snippet.path))
+	proc.on('attention', (file) => {
+
+		win.focus();
+		vfs.readfile(file)
+			.then(contents => setText(contents, file.path))
 			.catch(error => console.error(error)); // FIXME: Dialog
 	});
 	basic.on('new-file', () => {
@@ -690,7 +702,7 @@ clipboard.readText().then(console.log, console.error);
 	});
 
 	basic.on('open-file', (file) => {
-		console.log(file);
+
 		vfs.readfile(file)
 			.then(contents => setText(contents, file.path))
 			.catch(error => console.error(error)); // FIXME: Dialog
