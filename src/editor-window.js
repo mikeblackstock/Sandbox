@@ -482,7 +482,7 @@ h(Toolbar, {
 		column: 0,
 		lines: 0,
 		buttons:'',
-		showTools: true,
+		showTools: false,
         selectionRange: "",
         beginSelect: {},
         endSelect: {},
@@ -656,7 +656,7 @@ document.execCommand('paste');
 
 	});
 	proc.on('loadDefault', () => {
-alert("Sandbox:editor-window:656 " + snippet);
+
 		vfs.readfile(snippet)
 				.then(contents => setText(contents, snippet.path))
 				.catch(error => console.error(error)); // FIXME: Dialog
@@ -686,6 +686,12 @@ alert("Sandbox:editor-window:656 " + snippet);
 			.then(contents => setText(contents, file.path))
 			.catch(error => console.error(error)); // FIXME: Dialog
 	});
+	
+	proc.on('setMobile', () => {
+		hyperapp.toggleTools(true);
+		win.maximize();
+	});
+	
 	basic.on('new-file', () => {
 
 	});
@@ -714,8 +720,9 @@ alert("Sandbox:editor-window:656 " + snippet);
 	win.on('blur', () => editor.blur());
 //	win.on('focus', () => editor.focus());
 
-	if (window.mobile === true) 
-			win.maximize();
+	if (window.mobile === true) {
+			proc.emit('setMobilel');
+	}
 
 	return hyperapp;
 };

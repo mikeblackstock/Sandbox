@@ -9,6 +9,9 @@ let pdfFileObj= {file: {}};
 let zoomString="#zoom=100";
 let userID= "demo";	
 
+
+
+//alert("Sandbox:index.js:12");
   const proc = core.make('osjs/application', {args, options, metadata});
 //  const ws = proc.socket('/socket');
 /*
@@ -96,7 +99,9 @@ let userID= "demo";
         osjs.run('PDFViewer', pdfFileObj);
 	});
  
- 
+ 	if (args.path) {
+		proc.emit('attention', args);
+	}	
   return proc;
 };
 
