@@ -223,7 +223,9 @@ const setSavedTitle= function(path) {
 		editor.insert(token);
 		editor.focus();
 	},
-
+    command: (cmd) => {
+    	eval(cmd);
+    },
     toggleLog: showLog => ({showLog}),
     appendLog: append => state => ({log: state.log + append + '\n'}),
 
@@ -259,7 +261,8 @@ proc.on('lilypond:close-log', () => {
     hyperapp.appendLog('*** FAILED TO COMPILE ***');
     hyperapp.appendLog(error);
   });
-
+proc.on('Insert', (...args) => hyperapp.insert(...args));
+proc.on('Command', (...args) => hyperapp.command(...args));
 	proc.on('attention', (args) => {
 console.log(args.file.path);
 		
@@ -296,8 +299,8 @@ console.log(args.file.path);
   win.on('blur', () => editor.blur());
   win.on('focus', () => editor.focus());
 
-if (window.mobile === true)
-	win.maximize();
+//if (window.mobile === true)
+//	win.maximize();
   return hyperapp;
 };
 
@@ -307,8 +310,8 @@ export const createEditorWindow = (core, proc) =>
     title: proc.metadata.title.en_EN,
     icon: proc.resource(proc.metadata.icon),
 //a bit bigger
-    dimension: {width: 500, height: 500},
-    position: 'center'
+    dimension: {width: 360, height: 310},
+    position: 'topleft'
   })
     .on('destroy', () => proc.destroy())
     .render(($content, win) => {

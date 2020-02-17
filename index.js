@@ -43,6 +43,7 @@ let fileObj= {};
  	fileObj= file;
 
   	const username= core.getUser().username;
+
     sendMessage(username, file);
  
   })
