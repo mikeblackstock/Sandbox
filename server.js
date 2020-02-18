@@ -4,11 +4,13 @@ const fs = require('fs');
 const path = require('path');
 
 //const createPath = (core, ...args) => path.resolve(core.options.root, 'vfs', req.session.user.username, ...args);
-const createPath = (core, user,  ...args) => path.resolve(core.options.root, 'vfs/demo', user, ...args);
+const createPath = (core, user,  ...args) => path.resolve(core.options.root, 'vfs/', user, ...args);
 const runcmd = (core, cmd, user, respond, file) => new Promise((resolve, reject) => {
-
+console.log("cmd:" + cmd);
+console.log("user:" + user);
+console.log("file.path:" + file.path);
 	if (cmd === "lilypond") {
-		
+	
 	const tmpFilename=  file.path.replace(/^.*[\\\/]/, '');
 	const pdfFile= tmpFilename.replace(/\..+$/, '')  + ".pdf";
 	const pdfPath= file.path.replace(/\..+$/, '')  + ".pdf";
@@ -97,9 +99,9 @@ module.exports = (core, proc) => ({
 			
 			const {cmd, user, args} = JSON.parse(msg);
 
-			runcmd(core, cmd, user, respond, ...args);
+		//	runcmd(core, cmd, user, respond, ...args);
 			
-			
+			runcmd(core, 'lilypond', 'demo', respond, ...args);			
 			
 //    respond('Internal socket');
   }
