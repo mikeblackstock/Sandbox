@@ -64,10 +64,11 @@ const setSavedTitle= function(path) {
       }, _('LBL_VIEW')),
       h(MenubarItem, {
         onclick: () => actions.compile()
-      }, 'Compile')
-
-  
-
+      }, 'Compile'),
+      
+      h(MenubarItem, {
+        onclick: () => actions.FS()
+      }, 'FS')
 
 /*      
       h(MenubarItem, {
@@ -197,6 +198,7 @@ const setSavedTitle= function(path) {
     column: 0,
     lines: 0,
     log: '',
+    BIK: false,
     showLog: false
   }, {
     openMainMenu: ev => (state, actions) => {
@@ -219,6 +221,14 @@ const setSavedTitle= function(path) {
       actions.toggleLog(true);
     },
 
+	FS: () => {
+//		if (!hyperapp.BIK)
+			win.maximize();
+//		else
+//			win.restore();
+	},
+	
+	
 	insert: (token) => {
 		editor.insert(token);
 		editor.focus();
@@ -295,7 +305,21 @@ console.log(args.file.path);
 
   basic.init();
 
-  win.on('resized', () => editor.resize());
+  win.on('resized', () => {
+  	editor.resize();
+ 
+  });	
+  win.on('maximize', () => {
+  	editor.resize();
+
+  	hyperapp.BIK= true;
+//  	alert("MAXED");
+   });	
+  win.on('restore', () => {
+  	editor.resize();
+  	hyperapp.BIK= false;
+ // 	alert("RESTORED");
+   });	   
   win.on('blur', () => editor.blur());
   win.on('focus', () => editor.focus());
 
