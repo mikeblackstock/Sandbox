@@ -67,7 +67,7 @@ const setSavedTitle= function(path) {
       }, 'Compile'),
       
       h(MenubarItem, {
-        onclick: () => actions.FS()
+        onclick: () => actions.fullscreen()
       }, 'FS')
 
 /*      
@@ -157,8 +157,9 @@ const setSavedTitle= function(path) {
 		// if we're mobile, this will disable the device's auto keyboard popup
 		// we'll have our own keyboard
 		editor.on('focus', () => {
-			if (window.mobile) {
+			if (window.mobile && !hyperapp.fullscreen) {
 				editor.blur();
+
 //				actions.toggleTools(!state.showTools);
 			}
 		});		
@@ -198,7 +199,7 @@ const setSavedTitle= function(path) {
     column: 0,
     lines: 0,
     log: '',
-    BIK: false,
+    fullscreen: false,
     showLog: false
   }, {
     openMainMenu: ev => (state, actions) => {
@@ -221,9 +222,10 @@ const setSavedTitle= function(path) {
       actions.toggleLog(true);
     },
 
-	FS: () => {
+	fullscreen: () => {
 //		if (!hyperapp.BIK)
 			win.maximize();
+			hyperapp.fullscreen= true;
 //		else
 //			win.restore();
 	},
@@ -235,6 +237,12 @@ const setSavedTitle= function(path) {
 	},
     command: (cmd) => {
     	eval(cmd);
+    },
+    
+    restore: () => {
+    	win.restore();
+    	hyperapp.fullscreen= false;
+ 
     },
     toggleLog: showLog => ({showLog}),
     appendLog: append => state => ({log: state.log + append + '\n'}),
@@ -271,8 +279,10 @@ proc.on('lilypond:close-log', () => {
     hyperapp.appendLog('*** FAILED TO COMPILE ***');
     hyperapp.appendLog(error);
   });
+ 
 proc.on('Insert', (...args) => hyperapp.insert(...args));
 proc.on('Command', (...args) => hyperapp.command(...args));
+proc.on('restore', () => hyperapp.restore());
 	proc.on('attention', (args) => {
 console.log(args.file.path);
 		
@@ -309,17 +319,12 @@ console.log(args.file.path);
   	editor.resize();
  
   });	
-  win.on('maximize', () => {
-  	editor.resize();
 
-  	hyperapp.BIK= true;
-//  	alert("MAXED");
-   });	
-  win.on('restore', () => {
-  	editor.resize();
-  	hyperapp.BIK= false;
- // 	alert("RESTORED");
-   });	   
+  win.on('maximize', () => {
+  		hyperapp.fullscreen= true;
+  		editor.resize();
+ 
+  });	 
   win.on('blur', () => editor.blur());
   win.on('focus', () => editor.focus());
 
