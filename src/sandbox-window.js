@@ -13,13 +13,41 @@ import 'brace/mode/json';
 //import 'brace/ext/modelist';
 //import 'brace/ext/themelist';
 import 'brace/theme/chrome';
+let snippet = {};
+let tmpID = '';
+let zoomString = '#zoom=100';
+
+const getCookie = (name) => {
+	 let matches = document.cookie.match(new RegExp(
+    "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
+  ));
+  return matches ? decodeURIComponent(matches[1]) : undefined;
+};
+
 const createMainMenu = (current, actions, _) => ([
-  {label: _('LBL_NEW'), onclick: () => actions.menuNew()},
-  {label: _('LBL_OPEN'), onclick: () => actions.menuOpen()},
-  {label: _('LBL_SAVE'), disabled: !current, onclick: () => actions.menuSave()},
-  {label: _('LBL_SAVEAS'), onclick: () => actions.menuSaveAs()},
-  {label: _('LBL_QUIT'), onclick: () => actions.menuQuit()}
-]);
+	{
+		label: _('Scales.ly'),
+		onclick: () => actions.loadSnippet('Scales.ly')
+	},
+		{
+		label: _('Chords.ly'),
+		onclick: () => actions.loadSnippet('Chords.ly')
+	},
+	
+		{
+		label: _('Rhythms.ly'),
+		onclick: () => actions.loadSnippet('Rhythms.ly')
+	},
+		
+	{
+
+		label: _('LBL_SAVE'),
+		onclick: () => actions.menuSave()
+	},
+	{
+		label: _('LBL_QUIT'),
+		onclick: () => actions.menuQuit()
+	}]);
 
 const createViewMenu = (state, actions, _) => ([{
   label: _('LBL_SHOW_LOG'),
@@ -34,7 +62,7 @@ const createEditorInterface = (core, proc, win, $content) => {
   const vfs = core.make('osjs/vfs');
   const contextmenu = core.make('osjs/contextmenu').show;
   const basic = core.make('osjs/basic-application', proc, win, {
-//    defaultFilename: 'New.ly'
+    defaultFilename: 'Default.ly'
   });
 
 // const setText = contents => editor.setValue(contents); 
@@ -67,80 +95,13 @@ const setSavedTitle= function(path) {
       }, 'Compile'),
       
       h(MenubarItem, {
-        onclick: () => actions.fullscreen()
+        onclick: () => win.maximize()
       }, 'FS')
 
-/*      
-      h(MenubarItem, {
-        onclick: () => actions.insert(' ')
-      }, 'Sp'),     
 
-     h(MenubarItem, {
-        onclick: () => actions.insert("'")
-      }, "' "), 
-      
-     h(MenubarItem, {
-        onclick: () => actions.insert(",")
-      }, ", "), 
-      
-     h(MenubarItem, {
-        onclick: () => actions.insert("=")
-      }, "= "), 
-      
-     h(MenubarItem, {
-        onclick: () => actions.insert("\\")
-      }, "\\ "),       
- 
-     h(MenubarItem, {
-        onclick: () => actions.insert("{")
-      }, "{ "),  
- */
     ]),
     
-// remove for more screen space on tablets
-/*
-    h(Toolbar, {}, [
- 
-      h(Button, {
-        onclick: () => actions.insert(' ')
-      }, 'S'),
-      
- 	h(Button, {
-        onclick: () => actions.insert('a')
-      }, 'a'),
-      
-      h(Button, {
-        onclick: () => actions.insert('b')
-      }, 'b'),
-      
-     h(Button, {
-        onclick: () => actions.insert('c')
-      }, 'c'),
-      
-      h(Button, {
-        onclick: () => actions.insert('d')
-      }, 'd'),     
-      
-     h(Button, {
-        onclick: () => actions.insert('e')
-      }, 'e'),      
- 
-     h(Button, {
-        onclick: () => actions.insert('f')
-      }, 'f'), 
-      
-     h(Button, {
-        onclick: () => actions.insert('g')
-      }, 'g'),       
-      
-     h(Button, {
-        onclick: () => actions.insert('\'')
-      }, '\''), 
 
-
- 
- ]),
-*/
     
     h(BoxContainer, {
       grow: 3,
@@ -153,11 +114,25 @@ const setSavedTitle= function(path) {
 		editor.setOptions({
    			fontSize: "11pt"
 		});
-		
+				editor.setValue("%\n% Lilypond compiler demo\n%\n" +
+				"% Select a snippet from 'File' menu\n" + 
+				"% Click 'Compile'\n" +
+				"% Make changes, play around\n%\n" +
+				"% or click 'Compile' now to\n" +
+				"% compile the snippet below\n\n" +
+				'\\version "2.18"\n'	+
+				"\\layout {indent = 0}\n" +
+				"\\relative c'\n" +  
+				"{\n" +
+				"c d e f g a b c\n" + 
+				"}\n\n"); 	
+		//		 \n\n\n\n\n\n\n\n\n\n\n\n 
 		// if we're mobile, this will disable the device's auto keyboard popup
 		// we'll have our own keyboard
 		editor.on('focus', () => {
+
 			if (window.mobile && !hyperapp.fullscreen) {
+				
 				editor.blur();
 
 //				actions.toggleTools(!state.showTools);
@@ -199,6 +174,7 @@ const setSavedTitle= function(path) {
     column: 0,
     lines: 0,
     log: '',
+    focused: false,
     fullscreen: false,
     showLog: false
   }, {
@@ -217,6 +193,13 @@ const setSavedTitle= function(path) {
     },
 
     compile: () => (state, actions) => {
+ 
+    	let file= {"filename": "Default.ly", "path": "home:/" + getCookie('ometID') + "/Default.ly"};
+    	if (!proc.args.file) {
+    		proc.args.file= file;
+ 
+		}	
+
 		basic.emit('save-file');	
       proc.emit('lilypond:compile', proc.args.file);
       actions.toggleLog(true);
@@ -225,13 +208,14 @@ const setSavedTitle= function(path) {
 	fullscreen: () => {
 //		if (!hyperapp.BIK)
 			win.maximize();
-			hyperapp.fullscreen= true;
+
 //		else
 //			win.restore();
 	},
 	
 	
 	insert: (token) => {
+console.log(win);
 		editor.insert(token);
 		editor.focus();
 	},
@@ -240,10 +224,14 @@ const setSavedTitle= function(path) {
     },
     
     restore: () => {
+ 
     	win.restore();
+
     	hyperapp.fullscreen= false;
  
     },
+    
+ 
     toggleLog: showLog => ({showLog}),
     appendLog: append => state => ({log: state.log + append + '\n'}),
 
@@ -251,7 +239,20 @@ const setSavedTitle= function(path) {
     menuOpen: () => basic.createOpenDialog(),
     menuSave: () => (state, actions) => basic.emit('save-file'),
     menuSaveAs: () => basic.createSaveDialog(),
-    menuQuit: () => proc.destroy()
+    menuQuit: () => proc.destroy(),
+    
+    		loadSnippet: (filename) => {
+			
+			snippet = {
+				filename: filename,
+				path: 'home:/' + getCookie('ometID') + '/' + filename
+			};
+			//		OSjs.run('Sandbox', {file: {filename: 'Scale.ly', path:'home:/Scale.ly'}});
+			vfs.readfile(snippet)
+				.then(contents => setText(contents, snippet.path))
+				.catch(error => console.error(error)); // FIXME: Dialog
+
+		}
   }, view, $content);
 
   proc.on('destroy', () => basic.destroy());
@@ -283,6 +284,7 @@ proc.on('lilypond:close-log', () => {
 proc.on('Insert', (...args) => hyperapp.insert(...args));
 proc.on('Command', (...args) => hyperapp.command(...args));
 proc.on('restore', () => hyperapp.restore());
+proc.on('focus', () => win.focus());
 	proc.on('attention', (args) => {
 console.log(args.file.path);
 		
@@ -296,14 +298,18 @@ console.log(args.file.path);
   });
 
   basic.on('save-file', () => {
-    if (proc.args.file) {
+ 
       const contents = getText();
-
+    	let file= {"filename": snippet.filename, "path": snippet.path};
+    	if (!proc.args.file) {
+    		proc.args.file= file;
+ 
+		}	
       vfs.writefile(proc.args.file, contents)
  //       .then(() => win.setTitle(proc.title))
  		.then(() => setSavedTitle(proc.args.file.path))		
         .catch(error => console.error(error)); // FIXME: Dialog
-    }
+
   });
 
   basic.on('open-file', (file) => {
@@ -325,11 +331,27 @@ console.log(args.file.path);
   		editor.resize();
  
   });	 
-  win.on('blur', () => editor.blur());
-  win.on('focus', () => editor.focus());
+  win.on('blur', () => {
+  	hyperapp.focused= false;
+  	editor.blur();
+  });	
+  
+  win.on('focus', () => {
+  	hyperapp.focused= true;
+  	editor.focus();
+  	
 
-//if (window.mobile === true)
-//	win.maximize();
+ 
+  });
+  
+
+if (window.mobile === true) {
+	win.setPosition({top:10, left:0});
+	win.setDimension({width: 360, height: 306});
+	core.run('Keyboard');
+}
+	hyperapp.fullscreen= false;
+	
   return hyperapp;
 };
 
@@ -338,9 +360,10 @@ export const createEditorWindow = (core, proc) =>
     id: 'SandboxWindow',
     title: proc.metadata.title.en_EN,
     icon: proc.resource(proc.metadata.icon),
-//a bit bigger
-    dimension: {width: 360, height: 310},
-    position: 'topleft'
+    dimension: {width: 600, height: 500},
+    position: 'center'
+//    dimension: {width: 360, height: 306},
+//    position: 'topleft'
   })
     .on('destroy', () => proc.destroy())
     .render(($content, win) => {

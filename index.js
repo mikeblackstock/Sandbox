@@ -73,8 +73,8 @@ let userID= "demo";
  
  
   proc.on('lilypond:compile', file => {
-  	
 
+console.log(file);
  fileObj= Object.assign({}, file);
 
 // 	const username= core.getUser().username;

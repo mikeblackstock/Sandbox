@@ -1,7 +1,7 @@
 {
   "type": "application",
   "name": "Sandbox",
-  "category": "development",
+  "category": "projects",
   "server": "server.js",
   "icon": "icon.png",
   "singleton": true,
