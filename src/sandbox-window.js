@@ -7,6 +7,10 @@ import * as ace from 'brace';
 //import 'brace/mode/css';
 //import 'brace/mode/html';
 
+// FOCUS SANDBOX AFTER LOAD!!
+
+
+
 import './lilypond';
 import 'brace/mode/html';
 import 'brace/mode/json';
@@ -39,10 +43,10 @@ const createMainMenu = (current, actions, _) => ([
 		onclick: () => actions.loadSnippet('Rhythms.ly')
 	},
 
-//	{
-//		label: _("Cantata 208"),
-//		onclick: () => actions.loadSnippet('Sheep.ly')
-//	},
+	{
+		label: _("Cantata 208"),
+		onclick: () => actions.loadSnippet('Sheep.ly')
+	},
 		
 	{
 
@@ -198,8 +202,8 @@ const setSavedTitle= function(path) {
     },
 
     compile: () => (state, actions) => {
- 
-    	let file= {"filename": "Default.ly", "path": "home:/" + getCookie('ometID') + "/Default.ly"};
+ alert(snippet.filename);
+    	let file= {"filename": snippet.filename, "path": "home:/" + getCookie('ometID') + "/" + snippet.filename};
     	if (!proc.args.file) {
     		proc.args.file= file;
  
