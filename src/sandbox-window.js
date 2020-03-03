@@ -17,7 +17,7 @@ import 'brace/mode/json';
 //import 'brace/ext/modelist';
 //import 'brace/ext/themelist';
 import 'brace/theme/chrome';
-let snippet = {};
+let snippet = {"filename":"Default.ly"};
 let tmpID = '';
 let zoomString = '#zoom=100';
 
