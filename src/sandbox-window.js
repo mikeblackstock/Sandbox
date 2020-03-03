@@ -202,7 +202,6 @@ const setSavedTitle= function(path) {
     },
 
     compile: () => (state, actions) => {
- alert(snippet.filename);
     	let file= {"filename": snippet.filename, "path": "home:/" + getCookie('ometID') + "/" + snippet.filename};
     	if (!proc.args.file) {
     		proc.args.file= file;
