@@ -38,6 +38,11 @@ const createMainMenu = (current, actions, _) => ([
 		label: _('Rhythms.ly'),
 		onclick: () => actions.loadSnippet('Rhythms.ly')
 	},
+
+//	{
+//		label: _("Cantata 208"),
+//		onclick: () => actions.loadSnippet('Sheep.ly')
+//	},
 		
 	{
 
