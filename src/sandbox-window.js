@@ -354,9 +354,10 @@ console.log(args.file.path);
   
 
 if (window.mobile === true) {
-	win.setPosition({top:10, left:0});
-	
-	win.setDimension({width: 360, height: window.innerHeight - 216});
+	win.setPosition({top:32, left:0});
+//244 is the approx. size of the bottom keyboard plus top panel	
+
+	win.setDimension({width: 360, height: window.innerHeight - 244});
 	core.run('Keyboard');
 }
 	hyperapp.fullscreen= false;
