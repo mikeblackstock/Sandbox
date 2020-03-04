@@ -355,7 +355,8 @@ console.log(args.file.path);
 
 if (window.mobile === true) {
 	win.setPosition({top:10, left:0});
-	win.setDimension({width: 360, height: 306});
+	
+	win.setDimension({width: 360, height: window.innerHeight - 216});
 	core.run('Keyboard');
 }
 	hyperapp.fullscreen= false;
