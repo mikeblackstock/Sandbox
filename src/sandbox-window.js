@@ -17,7 +17,7 @@ import 'brace/mode/json';
 //import 'brace/ext/modelist';
 //import 'brace/ext/themelist';
 import 'brace/theme/chrome';
-let snippet = {"filename":"Default.ly"};
+let snippet = {"filename":"Untitled.ly"};
 let tmpID = '';
 let zoomString = '#zoom=100';
 
@@ -49,7 +49,7 @@ const createEditorInterface = (core, proc, win, $content) => {
   const vfs = core.make('osjs/vfs');
   const contextmenu = core.make('osjs/contextmenu').show;
   const basic = core.make('osjs/basic-application', proc, win, {
-    defaultFilename: 'Default.ly'
+    defaultFilename: 'Untitled.ly'
   });
 
 // const setText = contents => editor.setValue(contents); 
