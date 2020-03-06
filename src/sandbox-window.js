@@ -29,34 +29,12 @@ const getCookie = (name) => {
 };
 
 const createMainMenu = (current, actions, _) => ([
-	{
-		label: _('Scales.ly'),
-		onclick: () => actions.loadSnippet('Scales.ly')
-	},
-		{
-		label: _('Chords.ly'),
-		onclick: () => actions.loadSnippet('Chords.ly')
-	},
-	
-		{
-		label: _('Rhythms.ly'),
-		onclick: () => actions.loadSnippet('Rhythms.ly')
-	},
-
-	{
-		label: _("Cantata 208"),
-		onclick: () => actions.loadSnippet('Sheep.ly')
-	},
-		
-	{
-
-		label: _('LBL_SAVE'),
-		onclick: () => actions.menuSave()
-	},
-	{
-		label: _('LBL_QUIT'),
-		onclick: () => actions.menuQuit()
-	}]);
+  {label: _('LBL_NEW'), onclick: () => actions.menuNew()},
+  {label: _('LBL_OPEN'), onclick: () => actions.menuOpen()},
+  {label: _('LBL_SAVE'), disabled: !current, onclick: () => actions.menuSave()},
+  {label: _('LBL_SAVEAS'), onclick: () => actions.menuSaveAs()},
+  {label: _('LBL_QUIT'), onclick: () => actions.menuQuit()}
+]);
 
 const createViewMenu = (state, actions, _) => ([{
   label: _('LBL_SHOW_LOG'),
@@ -123,18 +101,7 @@ const setSavedTitle= function(path) {
 		editor.setOptions({
    			fontSize: "11pt"
 		});
-				editor.setValue("%\n% Lilypond compiler demo\n%\n" +
-				"% Select a snippet from 'File' menu\n" + 
-				"% Click 'Compile'\n" +
-				"% Make changes, play around\n%\n" +
-				"% or click 'Compile' now to\n" +
-				"% compile the snippet below\n\n" +
-				'\\version "2.18"\n'	+
-				"\\layout {indent = 0}\n" +
-				"\\relative c'\n" +  
-				"{\n" +
-				"c d e f g a b c\n" + 
-				"}\n\n"); 	
+				editor.setValue("%\n% New file\n%\n"); 	
 		//		 \n\n\n\n\n\n\n\n\n\n\n\n 
 		// if we're mobile, this will disable the device's auto keyboard popup
 		// we'll have our own keyboard
@@ -202,7 +169,7 @@ const setSavedTitle= function(path) {
     },
 
     compile: () => (state, actions) => {
-    	let file= {"filename": snippet.filename, "path": "home:/" + getCookie('ometID') + "/" + snippet.filename};
+    	let file= {"filename": snippet.filename, "path": "home:/" + snippet.filename};
     	if (!proc.args.file) {
     		proc.args.file= file;
  
@@ -321,7 +288,8 @@ console.log(args.file.path);
   });
 
   basic.on('open-file', (file) => {
- 
+ 	snippet.filename= file.filename;
+ 	snippet.path= file.path;
     vfs.readfile(file)
       .then(contents => setText(contents, file.path))
       .catch(error => console.error(error)); // FIXME: Dialog

@@ -36,27 +36,7 @@ console.log("file.path:" + file.path);
   	]);
  	}
 
-	if (cmd === "ls") {
-		const i = createPath(core, user, file.path.replace(/^home:\//, ''));
-//		const demoPath = createPath(core, "demo/" + user, file.path.replace(/^home:\//, ''));
 
- 		var p = spawn(cmd, [i]);
-	}
-
-	if (cmd === "init") {
-		var tmpID= "." + Date.now();
-		var tmpDIR= core.options.root + "/vfs/demo/" + tmpID;
-		
-		var p = spawn("mkdir", [tmpDIR]);
-		respond("init:" + tmpID);
-	}
-	
-	if (cmd === "rsync") {
-		var srcDir= core.options.root + "/vfs/demo/.snippets/";
-		var destDir= core.options.root + "/vfs/demo/" + user;
-		var p= spawn("rsync", ["-r", srcDir, destDir]);
-		respond("rsync:");
-	}
   p.stdout.on('data', data => respond(data.toString()));
   p.stderr.on('data', data => respond(data.toString()));
 
@@ -101,7 +81,7 @@ module.exports = (core, proc) => ({
 
 		//	runcmd(core, cmd, user, respond, ...args);
 			
-			runcmd(core, 'lilypond', 'demo', respond, ...args);			
+			runcmd(core, cmd, user, respond, ...args);			
 			
 //    respond('Internal socket');
   }
