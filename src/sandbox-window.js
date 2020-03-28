@@ -321,7 +321,10 @@ console.log(args.file.path);
   });
   
 
+
+	
 if (window.mobile === true) {
+
 	win.setPosition({top:32, left:0});
 //244 is the approx. size of the bottom keyboard plus top panel	
 
@@ -335,7 +338,7 @@ if (window.mobile === true) {
 
 export const createEditorWindow = (core, proc) =>
   proc.createWindow({
-    id: 'SandboxWindow',
+	id:'SandboxWindow',
     title: proc.metadata.title.en_EN,
     icon: proc.resource(proc.metadata.icon),
     dimension: {width: 600, height: 500},
@@ -345,6 +348,7 @@ export const createEditorWindow = (core, proc) =>
   })
     .on('destroy', () => proc.destroy())
     .render(($content, win) => {
+    	
       createEditorInterface(core, proc, win, $content);
     });
 
