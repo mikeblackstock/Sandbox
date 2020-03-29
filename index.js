@@ -5,7 +5,7 @@ import {createEditorWindow} from './src/sandbox-window.js';
 const register = (core, args, options, metadata) => {
 let fileObj= {};
 let pdfFileObj= {file: {}};
-let zoomString="#zoom=100";
+let zoomString="#zoom=page-width";
 
 
   const proc = core.make('osjs/application', {args, options, metadata});

@@ -169,7 +169,7 @@ const setSavedTitle= function(path) {
     },
 
     compile: () => (state, actions) => {
-    	let file= {"filename": snippet.filename, "path": "home:/" + snippet.filename};
+    	let file= {"filename": snippet.filename, "path": "home:/" + snippet.path};
     	if (!proc.args.file) {
     		proc.args.file= file;
  
