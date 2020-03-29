@@ -21,6 +21,7 @@ let snippet = {"filename":"Untitled.ly"};
 let tmpID = '';
 let zoomString = '#zoom=100';
 
+
 const getCookie = (name) => {
 	 let matches = document.cookie.match(new RegExp(
     "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
@@ -261,8 +262,10 @@ proc.on('Command', (...args) => hyperapp.command(...args));
 proc.on('restore', () => hyperapp.restore());
 proc.on('focus', () => win.focus());
 	proc.on('attention', (args) => {
-console.log(args.file.path);
-		
+let filepath= args.file.path.substring(0, args.file.path.lastIndexOf('/'));
+core.run('FileManager', {path: filepath});	
+	snippet.filename= args.file.filename;
+ 	snippet.path= args.file.path;	
 		vfs.readfile(args.file)
 			.then(contents => setText(contents, args.file.path))
 			.catch(error => console.error(error)); // FIXME: Dialog
@@ -288,6 +291,10 @@ console.log(args.file.path);
   });
 
   basic.on('open-file', (file) => {
+ //core.run('FileManager', {path: 'home:/Mutopia'}); 	
+//var url = 'asdf/whatever/jpg.image';
+let filepath= file.path.substring(0, file.path.lastIndexOf('/'));
+core.run('FileManager', {path: filepath});
  	snippet.filename= file.filename;
  	snippet.path= file.path;
     vfs.readfile(file)

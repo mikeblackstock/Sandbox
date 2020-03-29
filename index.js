@@ -93,6 +93,7 @@ console.log(file);
 		zoomString= file;
         let tmpPath= pdfFileObj.file.path.split("?");
         pdfFileObj.file.path=  tmpPath[0] + "?" + Date.now() + zoomString;
+        osjs.run('FileManager', 'refresh');
         osjs.run('PDFViewer', pdfFileObj);
 	});
  
