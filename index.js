@@ -54,7 +54,7 @@ let zoomString="#zoom=page-width";
 		proc.emit('lilypond:compile:success');
 		
 		osjs.run('PDFViewer', pdfFileObj);
-		osjs.run('FileManager', 'refresh');
+		osjs.run('Browser', 'refresh');
 		fileObj.path= fileObj.path.replace('.pdf', '.ly');
  		fileObj.filename= fileObj.filename.replace('.pdf', '.ly');		
 	}  	
