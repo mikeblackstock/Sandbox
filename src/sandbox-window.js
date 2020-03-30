@@ -261,7 +261,8 @@ proc.on('Insert', (...args) => hyperapp.insert(...args));
 proc.on('Command', (...args) => hyperapp.command(...args));
 proc.on('restore', () => hyperapp.restore());
 proc.on('focus', () => win.focus());
-	proc.on('attention', (args) => {
+proc.on('attention', (args) => {
+win.focus();		
 let filepath= args.file.path.substring(0, args.file.path.lastIndexOf('/'));
 core.run('FileManager', {path: filepath});	
 	snippet.filename= args.file.filename;
@@ -274,25 +275,23 @@ core.run('FileManager', {path: filepath});
   basic.on('new-file', () => {
     setText('');
   });
-
   basic.on('save-file', () => {
- 
       const contents = getText();
     	let file= {"filename": snippet.filename, "path": snippet.path};
+		// for session
     	if (!proc.args.file) {
     		proc.args.file= file;
- 
-		}	
-      vfs.writefile(proc.args.file, contents)
+ 		}
+	
+      vfs.writefile(file, contents)
  //       .then(() => win.setTitle(proc.title))
- 		.then(() => setSavedTitle(proc.args.file.path))		
+ 		.then(() => setSavedTitle(file.path))		
         .catch(error => console.error(error)); // FIXME: Dialog
 
   });
 
-  basic.on('open-file', (file) => {
- //core.run('FileManager', {path: 'home:/Mutopia'}); 	
-//var url = 'asdf/whatever/jpg.image';
+basic.on('open-file', (file) => {
+ 
 let filepath= file.path.substring(0, file.path.lastIndexOf('/'));
 core.run('FileManager', {path: filepath});
  	snippet.filename= file.filename;
