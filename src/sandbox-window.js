@@ -171,13 +171,15 @@ const setSavedTitle= function(path) {
 
     compile: () => (state, actions) => {
     	let file= {"filename": snippet.filename, "path": "home:/" + snippet.path};
+    	// check WTF this is for - something to do with session, but WHY??
     	if (!proc.args.file) {
     		proc.args.file= file;
  
 		}	
 
 		basic.emit('save-file');	
-      proc.emit('lilypond:compile', proc.args.file);
+	
+      proc.emit('lilypond:compile', snippet);
       actions.toggleLog(true);
     },
 
@@ -282,7 +284,7 @@ core.run('Browser', {path: filepath});
     	if (!proc.args.file) {
     		proc.args.file= file;
  		}
-	
+
       vfs.writefile(file, contents)
  //       .then(() => win.setTitle(proc.title))
  		.then(() => setSavedTitle(file.path))		
