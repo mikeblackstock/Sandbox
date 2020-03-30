@@ -264,7 +264,7 @@ proc.on('focus', () => win.focus());
 proc.on('attention', (args) => {
 win.focus();		
 let filepath= args.file.path.substring(0, args.file.path.lastIndexOf('/'));
-core.run('FileManager', {path: filepath});	
+core.run('Browser', {path: filepath});	
 	snippet.filename= args.file.filename;
  	snippet.path= args.file.path;	
 		vfs.readfile(args.file)
@@ -293,7 +293,7 @@ core.run('FileManager', {path: filepath});
 basic.on('open-file', (file) => {
  
 let filepath= file.path.substring(0, file.path.lastIndexOf('/'));
-core.run('FileManager', {path: filepath});
+core.run('Browser', {path: filepath});
  	snippet.filename= file.filename;
  	snippet.path= file.path;
     vfs.readfile(file)
